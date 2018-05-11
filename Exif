@@ -132,6 +132,7 @@ printf "$magenta"
         echo "#                                        #"
         echo "#-------------------RIP------------------#"
         echo
+	printf "$reset"
 	echo $(exit)
 }
 
