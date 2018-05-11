@@ -1,0 +1,185 @@
+#!/data/data/com.termux/files/usr/bin/bash -e
+#Coded by Ivam3 on 06/02/18
+#
+
+# Var
+        #Colors
+
+                red='\033[1;31m'                                                                                              green='\033[1;32m'
+                yellow='\033[1;33m'
+                blue='\033[1;34m'
+                magenta='\033[1;35m'
+                cyan='\033[1;36m'
+                reset='\033[0m'
+
+        #command
+
+                PWD=$(pwd)
+
+function extract_MD {
+	php MetaData.php > MD.txt;
+	sed -i 's/; /\n/g' MD.txt
+}
+
+function extract_GPS {
+	php GPS.php > GPS.txt
+}
+
+function menu {
+	echo
+	printf  "$magenta [*] CINDERELLA : $cyan what do you wanna do ? $reset\n"
+	echo
+	printf "$magenta 1) $reset Extract meta data.\n"
+	printf "$magenta 2) $reset Where it was created.\n"
+	printf "$magenta 3) $reset Exit.\n"
+	echo
+	printf "$magenta"
+        read -p "IbyC >> " Opc
+        case $Opc in
+                1)
+                        Opc_MD
+                        ;;
+                2)
+                        Opc_GPS
+                        ;;
+		3)
+			Goodbye
+        esac
+}
+
+function Opc_MD {
+	echo
+	printf "$magenta [*] CINDERELLA : $cyan Extracting meta data . . .\n"
+	extract_MD
+	sleep 3
+	echo "		Saved as $PWD/MD.txt"
+	MD_results
+}
+
+function MD_results {
+	echo
+	printf "$magenta 1) $reset Show results \n"
+	printf "$magenta 2) $reset back \n"
+	printf "$magenta 3) $reset exit \n"
+	printf "$magenta"
+	echo
+	read -p "IbyC >> " MD
+	printf "$reset"
+	case $MD in
+		1)
+			echo $(clear)
+			cat MD.txt
+			printf "$magenta [*] CINDERELLA : $cyan press enter to continue $reset"
+                        read enter
+			MD_results
+                        ;;
+		2)
+			menu
+			;;
+		3)
+			Goodbye
+        esac
+}
+
+function Opc_GPS {
+	echo
+	printf "$magenta [*] CINDERELLA : $cyan Extracting GPS location . . .\n"
+	extract_GPS
+	sleep 3
+	echo "		Saved as $PWD/GPS.txt "
+	GPS_results
+}
+
+function GPS_results {
+	echo
+	printf "$magenta 1) $reset Show results \n"
+	printf "$magenta 2) $reset back \n"
+	printf "$magenta 3) $reset exit \n"
+	printf "$magenta"
+	echo
+	read -p "IbyC >> " GPS
+	printf "$reset"
+	case $GPS in
+		1)
+		echo
+		cat GPS.txt
+                printf "$magenta [*] CINDERELLA : $cyan press enter to continue $reset"
+                read enter
+                GPS_results
+		;;
+	2)
+		menu
+		;;
+	3)
+		Goodbye
+esac
+}
+
+function Goodbye {
+	
+rm -rf IbyC.jpg
+	echo $(clear)
+	echo 
+        echo
+printf "$magenta"
+        echo "#-----THANKS TO MY MASTER CINDERELLA-----#"
+        echo "#                                        #"
+        echo "#             People don't die           #"
+        echo "#    If they still live in the hearts    #"
+        echo "#           of their loved ones          #"
+        echo "#       We love her ... We miss her      #"
+        echo "#                                        #"
+        echo "#-------------------RIP------------------#"
+        echo
+	echo $(exit)
+}
+
+#Banner
+
+        echo $(clear)
+printf "$cyan"
+        echo "              -{ IbyC Exif } "
+        echo "   -{ SO > Android - Only for Termux } "
+        echo "              -{ Coded by } "
+printf "$green"
+        echo "      =============================="
+        echo "      .___.                 ______,"
+        echo "      |   |__ ______   ___  \_____ \ "
+        echo "      |   \ \/ /\__ \ /   \    (__ <,"
+        echo "      |   |\   / __ \| Y Y \ \      \ "
+        echo "      |___| \_/ (____|__|_| /______ /"
+        echo "                     \/    \/      \/ "
+        echo "      ====== By ___ Cinderella ======"
+        echo
+printf "$cyan"
+        echo "          [---] Join me on [---]"
+        echo "[-] www.youtube.com/c/ivam3bycinderella [-]"
+        echo "            [-] t.me/ivam3 [-]"
+        sleep 1
+printf "$red"
+	echo
+        echo "          [---] DISCLAIMER [---]"
+printf "$reset"
+        echo " This tool was created for pentesting"
+        echo "     and computer security tests."
+        echo " If the law is violated with it's use,"
+        echo "  This would be the responsibility of "
+        echo "        the user who handled it"
+printf  "$red       [-] Use At Your Own Risk [-]"
+        echo
+        echo
+printf "$magenta"
+	while read -p "CINDERELLA : where your photo is ? >> " Photo && [ -z $Photo ]; do
+		printf "	$red please type the photo location $magenta \n"
+		sleep 3
+done
+	if [ -e $Photo ]; then
+	cp $Photo $PWD/IbyC.jpg
+	menu
+
+	else
+        printf "	$red There is not such photo \n"
+	sleep 2
+	Goodbye
+fi
+					#IbyC
