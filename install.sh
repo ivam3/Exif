@@ -53,7 +53,8 @@ chmod 555 $PWD/MetaData.php
 #
 # Thanks to ...
 	echo $(clear)
-        printf "$red"                                                                                                 echo "
+        printf "$red"
+	echo "
 	    _____      _ _____
            | ____Ivam3(_)  ___|
            |  _| \ \/ / | |_
