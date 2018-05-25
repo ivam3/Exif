@@ -13,141 +13,662 @@
                 cyan='\033[1;36m'
                 reset='\033[0m'
 
-        #command
+	#command
+		PWD=$(pwd)
 
-                PWD=$(pwd)
-
-function extract_MD {
-	php MetaData.php > MD.txt;
-	sed -i 's/; /\n/g' MD.txt
+function banner {
+	echo $(clear)
+	echo
+        printf "$red"
+        echo "
+	    _____      _ _____
+           | ____Ivam3(_)  ___|
+           |  _| \ \/ / | |_
+           | |___ >  <| |  _|
+           |_____/_/\_\_|_|  _v.1.0"
 }
 
-function extract_GPS {
-	php GPS.php > GPS.txt
-}
-
-function menu {
+function Menu {
+	banner
+echo "	     |-|         |-|
+	        MAIN MENU"
 	echo
-	printf  "$magenta [*] CINDERELLA : $cyan what do you wanna do ? $reset\n"
+	printf  "$magenta [*] CINDERELLA : $cyan What do you wanna do ? $reset\n"
 	echo
-	printf "$magenta 1) $reset Extract meta data.\n"
-	printf "$magenta 2) $reset Where it was created.\n"
-	printf "$magenta 3) $reset Exit.\n"
-	echo
-	printf "$magenta"
+	printf "$magenta 1) $reset Extract Meta Data.\n"
+	printf "$magenta 2) $reset Extract GPS- Location. \n"
+	printf "$magenta 3) $reset Search files.\n"
+        printf "$magenta 0) $reset Exit.\n"
+        echo
+        printf "$magenta"
         read -p "IbyC >> " Opc
         case $Opc in
                 1)
-                        Opc_MD
+                        Photo
                         ;;
                 2)
-                        Opc_GPS
+                        Photo
                         ;;
-		3)
-			Goodbye
+                3)
+                        Search
+                        ;;
+                0)
+                        Goodbye
+                        ;;
         esac
 }
 
+function Photo {
+	banner
+echo "	     |-|        |-|
+	        SET_FILE"
+	echo
+	echo
+        printf "$magenta"
+        while read -p "CINDERELLA : Tell me, where your photo is ? >> " Photo && [ -z $Photo ]; do
+                printf "        $red Please type the photo location $magenta \n"
+                sleep 3
+done
+        if [ -e $Photo ]; then
+        cp $Photo $PWD/IbyC.jpg
+        chmod 777 IbyC.jpg
+        Switch
+
+        else
+        printf "        $red There is not such photo \n"
+        sleep 5
+        Menu
+fi
+
+}
+
+function Switch {
+	if [ $opc = 1 ]; then
+		opc_MD
+	elif [ $opc = 2 ]; then
+		opc_GPS
+	fi
+}
+
+function extract_MD {
+	php modules/MetaData.php > tmp/MD.txt;
+	sed -i 's/; /\n/g' tmp/MD.txt
+}
+
+function extract_GPS {
+	php modules/GPS.php > tmp/GPS.txt
+}
+
+function MD_backup {
+        cp $PWD/tmp/MD.txt $PWD/database/MD/$MD
+}
+
+function GPS_backup {
+	cp $PWD/tmp/GPS.txt $PWD/database/GPS/$GPS
+}
+
 function Opc_MD {
+	banner
+echo "	     |-|          |-|
+                EXTRACT MD"
+printf "$reset"
 	echo
 	printf "$magenta [*] CINDERELLA : $cyan Extracting meta data . . .\n"
 	extract_MD
 	sleep 3
-	echo "		Saved as $PWD/MD.txt"
+	printf "$green
+		Temporally was saved as $reset $PWD/tmp/MD.txt"
+	sleep 3
 	MD_results
 }
 
 function MD_results {
+	banner
+echo "	      |-|          |-|
+	         MD RESULTS"
 	echo
 	printf "$magenta 1) $reset Show results \n"
-	printf "$magenta 2) $reset back \n"
-	printf "$magenta 3) $reset exit \n"
+	printf "$magenta 2) $reset Create a backup of EXtracted InFormation \n"
+	printf "$magenta 3) $reset Back to Main Menu\n"
+	printf "$magenta 0) $reset Exit \n"
 	printf "$magenta"
 	echo
 	read -p "IbyC >> " MD
 	printf "$reset"
 	case $MD in
 		1)
-			echo $(clear)
-			printf "$red"
-			echo "
-			 _____      _ _____
-			| ____Ivam3(_)  ___|
-			|  _| \ \/ / | |_
-			| |___ >  <| |  _|
-			|_____/_/\_\_|_| "
+			banner
+echo "	     |-|          |-|
+	        MD RESULTS"
 			printf "$reset"
 			echo
-			cat MD.txt
+			cat tmp/MD.txt
 			echo
-			printf "$magenta [*] CINDERELLA : $cyan press enter to continue $reset"
+			printf "$magenta [*] CINDERELLA : $cyan Press enter to continue $reset"
                         read enter
+			echo $(clear)
 			MD_results
                         ;;
 		2)
-			menu
-			;;
+			banner
+echo "	     |-|         |-|
+	        MD BACKUP"
+                        echo
+			printf "$magenta"
+                        while read -p "
+CINDERELLA : Save as (example.php) >>  " MD && [ -z $MD ]; do
+                                printf "$red
+                                        [W] O_ops!!                                                                                                   $magenta"
+                        done
+			sleep 3
+			if [ -e $PWD/database/MD/$MD ]; then
+				echo
+                                printf "		$red SORRY, there exist a file named $reset $MD
+                                "
+                                sleep 5
+                                MD_results
+                        else
+                                MD_backup
+                                echo
+                                printf "		$green GREAT!! $cyan it was saved as $reset $MD"
+                                sleep 5
+                                MD_results
+                        fi
+                        ;;
 		3)
+			Menu
+			;;
+		0)
 			Goodbye
         esac
 }
 
 function Opc_GPS {
+	banner
+echo "	    |-|           |-|
+               EXTRACT GPS"
 	echo
 	printf "$magenta [*] CINDERELLA : $cyan Extracting GPS location . . .\n"
 	extract_GPS
 	sleep 3
-	echo "		Saved as $PWD/GPS.txt "
+	printf "$green
+		Temporally was saved as $reset $PWD/tmp/GPS.txt "
+	sleep 3
 	GPS_results
 }
 
 function GPS_results {
+	banner
+echo "	     |-|           |-|
+                GPS RESULTS"
 	echo
 	printf "$magenta 1) $reset Show results \n"
-	printf "$magenta 2) $reset back \n"
-	printf "$magenta 3) $reset exit \n"
+	printf "$magenta 2) $reset Create a backup of EXtracted InFormation \n"
+	printf "$magenta 3) $reset Back to Main Menu \n"
+	printf "$magenta 0) $reset Exit \n"
 	printf "$magenta"
 	echo
 	read -p "IbyC >> " GPS
 	printf "$reset"
 	case $GPS in
 		1)
-			echo $(clear)
-			printf "$red"
-			echo "
-			 _____      _ _____
-			| ____Ivam3(_)  ___|
-			|  _| \ \/ / | |_
-			| |___ >  <| |  _|
-			|_____/_/\_\_|_| "
+			banner
+echo "	     |-|           |-|
+	        GPS RESULTS"
 			printf "$reset"
 			echo
-			cat GPS.txt
+			cat tmp/GPS.txt
 			echo
-			printf "$magenta [*] CINDERELLA : $cyan press enter to continue $reset"
+			printf "$magenta [*] CINDERELLA : $cyan Press enter to continue $reset"
 			read enter
+			echo $(clear)
 			GPS_results
 			;;
 		2)
-			menu
+			banner
+echo "	     |-|          |-|
+	        GPS BACKUP"
+                        echo
+			printf "$magenta"
+			while read -p "
+CINDERELLA : Save as (example.txt) >>  " GPS && [ -z $GPS ]; do
+				printf "$red
+					[W] O_ops!!
+					$magenta"
+			done
+			sleep 3
+
+			if [ -e $PWD/database/GPS/$GPS ]; then
+				echo
+				printf "		$red SORRY, there exist a file named $reset $GPS
+				"
+				sleep 5
+				GPS_results
+			else
+				GPS_backup
+				echo
+				printf "		$green GREAT!! $cyan it was saved as $reset $GPS"
+				sleep 5
+				GPS_results
+			fi
+			
 			;;
 		3)
+			Menu
+			;;
+		0)
 			Goodbye
 	esac
 }
 
-function Goodbye {
-	
-rm -rf IbyC.jpg
-	echo $(clear)
-	printf "$red"
-	echo " 
-	    _____      _ _____
-	   | ____Ivam3(_)  ___|
-	   |  _| \ \/ / | |_
-	   | |___ >  <| |  _|
-	   |_____/_/\_\_|_| "
+function Search {
+	banner
+echo "	     |-|         |-|
+	        TO SEARCH"
 	echo
+	printf  "$magenta [*] CINDERELLA : $cyan Choose an option \n"
+        echo
+        printf "$magenta 1) $reset Meta data file.\n"
+	printf "$magenta 2) $reset GPS Location file.\n"
+        printf "$magenta 3) $reset Back to Main Menu.\n"
+        printf "$magenta 0) $reset Exit.\n"
+        echo
+        printf "$magenta"
+        read -p "IbyC >> " SRCH
+        case $SRCH in
+		
+		1)
+			Search_MD
+			;;
+                2)
+			Search_GPS
+                        ;;
+                3)
+                	Menu
+			;;
+                0)
+        		Goodbye
+                        ;;
+	esac
+}
+
+
+function Menu_SRCH_MD {                                                                                                             banner
+echo "	     |-|         |-|
+	        TO SEARCH"
+        echo
+	printf "$cyan So, what do you wanna do ?"
+	echo "
+	"
+	printf "$magenta 1) $reset Look at the content. \n"
+	printf "$magenta 2) $reset Rename $File \n"
+	printf "$magenta 3) $reset Copy $File \n"
+	printf "$magenta 4) $reset Delete $File \n"
+	printf "$magenta 5) $reset Search another file. \n"
+        printf "$magenta 6) $reset Back to Main Menu. \n"
+        printf "$magenta 0) $reset Exit"
+	echo "
+	"
+	printf "$magenta"
+        read -p "IbyC >> " SRCH_file_MD
+	Case_SRCH_MD
+}
+
+function Search_MD {
+	banner
+echo "	     |-|         |-|
+		TO SEARCH"
+	echo
+	printf "$magenta"
+	while read -p "CINDERELLA : Name of the file to search ? >>  " File && [ -z $File ]; do
+		printf "$red
+			[W] O_ops!!
+		$magenta"
+	done
+
+	sleep 3
+
+	if [ -e $PWD/database/MD/$File ]; then
+		echo
+		printf "		$green Yeiii I found it !!"
+		sleep 1
+		Menu_SRCH_MD
+	else
+		sleep 2
+		echo
+		printf "$red The file $reset $File $red do not exist $reset"
+		Show_all_MD
+	fi
+}
+
+function Case_SRCH_MD {
+	case $SRCH_file in
+		1)
+			cat $PWD/database/MD/$File
+			echo
+			printf "$magenta CINDERELLA : $cyan press enter to continue"
+			read enter
+			Menu_SRCH_MD
+			;;
+                2)
+			echo
+			printf "$magenta"
+			while read -p "CINDERELLA : Give me a new name (example.php) >> " New_name && [ -z $New_name ]; do
+				printf "$red
+			[W] O_ops!!
+			$magenta"
+		done
+
+		mv $PWD/database/MD/$File $PWD/database/MD/$New_name
+		
+		if [ -e $PWD/database/MD/$New_name ]; then
+			echo
+			printf "		$cyan The file $reset $File $cyan was change to $reset $New_name"
+			sleep 5
+			Search
+		else
+			echo
+			printf "$red [W] O_ops!! Something was wrong"
+			sleep 5
+			Search
+		fi
+                        ;;
+		3)
+			echo
+			printf "$magenta"
+                        while read -p "CINDERELLA : Where you want to copy it >> " Move && [ -z $Move ]; do
+                                echo
+				printf "$red
+                        [W] O_ops!!
+                        $magenta"
+                done
+			cp $PWD/database/MD/$File $Move/$File
+
+		if [ -e $Move/$File ]; then
+                        echo
+			printf "		$cyan The file $File was move to $Move"
+                        sleep 5
+                        Search
+                else
+                        echo
+			printf "$red [W] O_ops!! Something was wrong"
+                        sleep 5
+                        Search
+                fi
+                        ;;
+		4)
+			echo
+			printf "$red"
+			while read -p "[W] CINDERELLA : Are you sure wanna delete file $File ? >>  " Delete && [ -z $Delete ]; do
+				echo
+				printf "$red
+				[W] O_ops!!"
+				sleep 3
+			done
+
+			until [ $Delete = "Y y Yes yes N No n no" ]; do
+				echo
+				printf "$red
+				[W] O_ops!!
+				$magenta"
+				sleep 3
+			done
+
+			if [ $Delete = "Y y Yes yes" ]; then
+				rm -rf $PWD/database/MD/$File
+				sleep 3
+				echo
+				printf "$magenta CINDERELLA : $green Yeii !! $cyan the file $File was remove"
+				sleep 5
+				Search
+			elif [ $Delate = "N no n No" ]; then
+				echo
+				printf "$magenta CINDERELLA : $cyan Getting back . . ."
+				sleep 3
+				Menu_SRCH_MD
+			fi
+			;;
+		5)
+			Search_MD
+			;;
+		6)
+			Menu
+			;;
+                0)
+			Goodbye
+                        ;;
+	esac
+}
+
+function Show_all_MD {
+	sleep 1
+	echo "
+	"
+	printf "		$cyan do you wanna . . . ?"
+	printf "$magenta"
+	echo
+	while read -p "
+1) See all files
+2) Go to Main Menu
+0) exit
+
+IbyC >> " Do && [ -z $Do ]; do
+	echo
+	printf "$red
+                        [W] O_ops!!
+		$magenta"
+	done
+	case $Do in
+		1)
+			echo "
+			"
+			ls $PWD/database/MD
+			echo
+			printf "$magenta CINDERELLA : $cyan Press enter to continue"
+			read enter
+			Search
+			;;
+		2)
+			Menu
+			;;
+		0)
+			Goodbye
+			;;
+	esac
+}
+
+function Search_GPS {
+	banner
+echo "       |-|         |-|
+                TO SEARCH"
+	echo
+	printf "$magenta"
+        while read -p "CINDERELLA : Name of the file to search ? >>  " File && [ -z $File ]; do
+		printf "$red
+		[W] O_ops!!
+		$magenta"
+	done
+	sleep 3
+	
+	if [ -e $PWD/database/GPS/$File ]; then
+                echo
+                printf "                $green Yeiii I found it !!"
+                sleep 1
+                Menu_SRCH_GPS
+        else
+                sleep 2
+                echo
+                printf "$red The file $reset $File $red do not exist $reset"
+                Show_all_GPS
+        fi
+}
+
+function Menu_SRCH_GPS {
+	banner
+echo "       |-|         |-|
+	        TO SEARCH"
+	echo
+	printf "$cyan So, what do you wanna do ?"
+	echo "
+	"
+	printf "$magenta 1) $reset Look at the content. \n"
+	printf "$magenta 2) $reset Rename $File \n"
+        printf "$magenta 3) $reset Copy $File \n"
+	printf "$magenta 4) $reset Delete $File \n"
+        printf "$magenta 5) $reset Search another file. \n"
+        printf "$magenta 6) $reset Back to Main Menu. \n"
+        printf "$magenta 0) $reset Exit"
+        echo "
+        "
+        printf "$magenta"
+        read -p "IbyC >> " SRCH_file_GPS
+        Case_SRCH_GPS
+}
+
+function Case_SRCH_GPS {
+        case $SRCH_file_GPS in
+                1)
+                        cat $PWD/database/GPS/$File
+                        echo
+                        printf "$magenta CINDERELLA : $cyan press enter to continue"
+                        read enter
+                        Menu_SRCH_GPS
+                        ;;
+                2)
+                        echo
+                        printf "$magenta"
+                        while read -p "CINDERELLA : Give me a new name (example.php) >> " New_name && [ -z $New_name ]; do
+                                printf "$red
+                        [W] O_ops!!
+                        $magenta"
+                done
+
+                mv $PWD/database/GPS/$File $PWD/database/GPS/$New_name
+
+                if [ -e $PWD/database/GPS/$New_name ]; then
+                        echo
+                        printf "                $cyan The file $reset $File $cyan was change to $reset $New_name"
+                        sleep 5
+                        Search
+                else
+                        echo
+                        printf "$red [W] O_ops!! Something was wrong"
+                        sleep 5
+                        Search
+                fi
+                        ;;
+                3)
+                        echo
+                        printf "$magenta"
+                        while read -p "CINDERELLA : Where you want to copy it >> " Move && [ -z $Move ]; do
+                                echo
+                                printf "$red
+                        [W] O_ops!!
+                        $magenta"
+                done
+                        cp $PWD/database/GPS/$File $Move/$File
+
+                if [ -e $Move/$File ]; then
+                        echo
+                        printf "                $cyan The file $File was move to $Move"
+                        sleep 5
+                        Search
+                else
+                        echo
+                        printf "$red [W] O_ops!! Something was wrong"
+                        sleep 5
+                        Search
+                fi
+                        ;;
+                4)
+                        echo
+                        printf "$red"
+                        while read -p "[W] CINDERELLA : Are you sure wanna delete file $File ? >>  " Delete && [ -z $Delete ]; do
+                                echo
+                                printf "$red
+                                [W] O_ops!!"
+				sleep 3
+                        done
+
+                        until [ $Delete = "Y y Yes yes N No n no" ]; do
+                                echo
+                                printf "$red
+                                [W] O_ops!!
+                                $magenta"
+                                sleep 3
+                        done
+
+                        if [ $Delete = "Y y Yes yes" ]; then
+                                rm -rf $PWD/database/GPS/$File
+                                sleep 3
+                                echo
+                                printf "$magenta CINDERELLA : $green Yeii !! $cyan the file $File was remove"
+                                sleep 5
+                                Search
+                        elif [ $Delate = "N no n No" ]; then
+                                echo
+                                printf "$magenta CINDERELLA : $cyan Getting back . . ."
+                                sleep 3
+                                Menu_SRCH_GPS
+                        fi
+                        ;;
+                5)
+                        Search_GPS
+                        ;;
+                6)
+                        Menu
+                        ;;
+                0)
+                        Goodbye
+                        ;;
+        esac
+}
+
+function Show_all_GPS {
+	sleep 1
+	echo "
+	"
+	printf "
+		$cyan do you wanna . . . ?"
+	printf "$magenta"
+        echo
+        while read -p "
+1) See all files
+2) Go to Main Menu
+0) exit
+
+IbyC >> " Do && [ -z $Do ]; do
+        echo
+        printf "$red
+                        [W] O_ops!!
+                $magenta"
+        done
+        case $Do in
+                1)
+                        echo "
+                        "
+                        ls $PWD/database/GPS
+                        echo
+                        printf "$magenta CINDERELLA : $cyan Press enter to continue"
+                        read enter
+                        Search
+                        ;;
+                2)
+                        Menu
+                        ;;
+                0)
+                        Goodbye
+                        ;;
+
+		esac
+}
+
+function Goodbye {
+        if [ -e $PWD/IbyC.jpg ]; then
+                rm -rf IbyC.jpg
+        fi
+        banner
+        echo
 printf "$magenta"
         echo "#-----THANKS TO MY MASTER CINDERELLA-----#"
         echo "#                                        #"
@@ -158,18 +679,17 @@ printf "$magenta"
         echo "#                                        #"
         echo "#-------------------RIP------------------#"
         echo
-	printf "$reset"
-	echo $(exit)
+        printf "$reset"
+        echo $(exit)
 }
 
-#Banner
-
-        echo $(clear)
-printf "$cyan"
+#Disclaimer
+	echo $(clear)
+	printf "$cyan"
         echo "              -{ IbyC Exif } "
         echo "   -{ SO > Android - Only for Termux } "
         echo "              -{ Coded by } "
-printf "$green"
+        printf "$green"
         echo "      =============================="
         echo "      .___.                 ______,"
         echo "      |   |__ ______   ___  \_____ \ "
@@ -185,7 +705,7 @@ printf "$cyan"
         echo "            [-] t.me/ivam3 [-]"
         sleep 1
 printf "$red"
-	echo
+        echo
         echo "          [---] DISCLAIMER [---]"
 printf "$reset"
         echo " This tool was created for pentesting"
@@ -193,21 +713,10 @@ printf "$reset"
         echo " If the law is violated with it's use,"
         echo "  This would be the responsibility of "
         echo "        the user who handled it"
-printf  "$red       [-] Use At Your Own Risk [-]"
+printf "$red       [-] Use At Your Own Risk [-]"
         echo
         echo
-printf "$magenta"
-	while read -p "CINDERELLA : where your photo is ? >> " Photo && [ -z $Photo ]; do
-		printf "	$red please type the photo location $magenta \n"
-		sleep 3
-done
-	if [ -e $Photo ]; then
-	cp $Photo $PWD/IbyC.jpg
-	menu
-
-	else
-        printf "	$red There is not such photo \n"
-	sleep 2
-	Goodbye
-fi
+printf "	$cyan Press $green enter $cyan to continue $reset"
+        read enter
+        Menu
 					#IbyC
