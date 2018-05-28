@@ -36,7 +36,7 @@ echo "	     |-|         |-|
 	printf  "$magenta [*] CINDERELLA : $cyan What do you wanna do ? $reset\n"
 	echo
 	printf "$magenta 1) $reset Extract Meta Data.\n"
-	printf "$magenta 2) $reset Extract GPS- Location. \n"
+	printf "$magenta 2) $reset Extract GPS Location. \n"
 	printf "$magenta 3) $reset Search files.\n"
         printf "$magenta 0) $reset Exit.\n"
         echo
@@ -45,9 +45,11 @@ echo "	     |-|         |-|
         case $Opc in
                 1)
                         Photo
+			Opc_MD
                         ;;
                 2)
                         Photo
+			Opc_GPS
                         ;;
                 3)
                         Search
@@ -72,7 +74,6 @@ done
         if [ -e $Photo ]; then
         cp $Photo $PWD/IbyC.jpg
         chmod 777 IbyC.jpg
-        Switch
 
         else
         printf "        $red There is not such photo \n"
@@ -80,14 +81,6 @@ done
         Menu
 fi
 
-}
-
-function Switch {
-	if [ $opc = 1 ]; then
-		opc_MD
-	elif [ $opc = 2 ]; then
-		opc_GPS
-	fi
 }
 
 function extract_MD {
@@ -215,7 +208,7 @@ echo "	     |-|           |-|
 			banner
 echo "	     |-|           |-|
 	        GPS RESULTS"
-			printf "$reset"
+			printf "$green"
 			echo
 			cat tmp/GPS.txt
 			echo
@@ -266,10 +259,10 @@ function Search {
 echo "	     |-|         |-|
 	        TO SEARCH"
 	echo
-	printf  "$magenta [*] CINDERELLA : $cyan Choose an option \n"
+	printf  "$magenta [*] CINDERELLA : $cyan What kind of file are you search? \n"
         echo
-        printf "$magenta 1) $reset Meta data file.\n"
-	printf "$magenta 2) $reset GPS Location file.\n"
+        printf "$magenta 1) $reset Meta data.\n"
+	printf "$magenta 2) $reset GPS Location.\n"
         printf "$magenta 3) $reset Back to Main Menu.\n"
         printf "$magenta 0) $reset Exit.\n"
         echo
@@ -342,8 +335,9 @@ echo "	     |-|         |-|
 }
 
 function Case_SRCH_MD {
-	case $SRCH_file in
+	case $SRCH_file_MD in
 		1)
+			printf "$reset"
 			cat $PWD/database/MD/$File
 			echo
 			printf "$magenta CINDERELLA : $cyan press enter to continue"
@@ -363,7 +357,7 @@ function Case_SRCH_MD {
 		
 		if [ -e $PWD/database/MD/$New_name ]; then
 			echo
-			printf "		$cyan The file $reset $File $cyan was change to $reset $New_name"
+			printf "		$cyan The file $reset $File $cyan was changed to $reset $New_name"
 			sleep 5
 			Search
 		else
@@ -382,18 +376,18 @@ function Case_SRCH_MD {
                         [W] O_ops!!
                         $magenta"
                 done
-			cp $PWD/database/MD/$File $Move/$File
 
-		if [ -e $Move/$File ]; then
-                        echo
-			printf "		$cyan The file $File was move to $Move"
+		if [ -d $Move ]; then
+			cp $PWD/database/MD/$File $Move/$File
+			echo
+			printf "		$cyan The file $File was move to $Move/$File"
                         sleep 5
-                        Search
+                        Menu_SRCH_MD
                 else
                         echo
 			printf "$red [W] O_ops!! Something was wrong"
                         sleep 5
-                        Search
+                        Menu_SRCH_MD
                 fi
                         ;;
 		4)
@@ -408,13 +402,7 @@ function Case_SRCH_MD {
 
 			until [ $Delete = "Y y Yes yes N No n no" ]; do
 				echo
-				printf "$red
-				[W] O_ops!!
-				$magenta"
-				sleep 3
-			done
-
-			if [ $Delete = "Y y Yes yes" ]; then
+				if [ $Delete = "Y y Yes yes" ]; then
 				rm -rf $PWD/database/MD/$File
 				sleep 3
 				echo
@@ -427,6 +415,7 @@ function Case_SRCH_MD {
 				sleep 3
 				Menu_SRCH_MD
 			fi
+		done
 			;;
 		5)
 			Search_MD
@@ -448,7 +437,7 @@ function Show_all_MD {
 	printf "$magenta"
 	echo
 	while read -p "
-1) See all files
+1) See all Meta Data files
 2) Go to Main Menu
 0) exit
 
@@ -462,6 +451,7 @@ IbyC >> " Do && [ -z $Do ]; do
 		1)
 			echo "
 			"
+			printf "$reset"
 			ls $PWD/database/MD
 			echo
 			printf "$magenta CINDERELLA : $cyan Press enter to continue"
@@ -479,7 +469,7 @@ IbyC >> " Do && [ -z $Do ]; do
 
 function Search_GPS {
 	banner
-echo "       |-|         |-|
+echo "	     |-|         |-|
                 TO SEARCH"
 	echo
 	printf "$magenta"
@@ -505,7 +495,7 @@ echo "       |-|         |-|
 
 function Menu_SRCH_GPS {
 	banner
-echo "       |-|         |-|
+echo "	     |-|         |-|
 	        TO SEARCH"
 	echo
 	printf "$cyan So, what do you wanna do ?"
@@ -528,7 +518,8 @@ echo "       |-|         |-|
 function Case_SRCH_GPS {
         case $SRCH_file_GPS in
                 1)
-                        cat $PWD/database/GPS/$File
+                        printf "$green"
+			cat $PWD/database/GPS/$File
                         echo
                         printf "$magenta CINDERELLA : $cyan press enter to continue"
                         read enter
@@ -566,18 +557,18 @@ function Case_SRCH_GPS {
                         [W] O_ops!!
                         $magenta"
                 done
-                        cp $PWD/database/GPS/$File $Move/$File
 
-                if [ -e $Move/$File ]; then
-                        echo
-                        printf "                $cyan The file $File was move to $Move"
+		if [ -d $Move ]; then
+                        cp $PWD/database/GPS/$File $Move/$File
+			echo
+                        printf "                $cyan The file $File was copy to $Move/$File"
                         sleep 5
-                        Search
+                        Menu_SRCH_GPS
                 else
                         echo
                         printf "$red [W] O_ops!! Something was wrong"
                         sleep 5
-                        Search
+                        Menu_SRCH_GPS
                 fi
                         ;;
                 4)
@@ -592,17 +583,11 @@ function Case_SRCH_GPS {
 
                         until [ $Delete = "Y y Yes yes N No n no" ]; do
                                 echo
-                                printf "$red
-                                [W] O_ops!!
-                                $magenta"
-                                sleep 3
-                        done
-
-                        if [ $Delete = "Y y Yes yes" ]; then
-                                rm -rf $PWD/database/GPS/$File
+			if [ $Delete = "Y y Yes yes" ]; then
+				rm -rf $PWD/database/GPS/$File
                                 sleep 3
                                 echo
-                                printf "$magenta CINDERELLA : $green Yeii !! $cyan the file $File was remove"
+                        	printf "$magenta CINDERELLA : $green Yeii !! $cyan the file $File was remove"
                                 sleep 5
                                 Search
                         elif [ $Delate = "N no n No" ]; then
@@ -611,6 +596,7 @@ function Case_SRCH_GPS {
                                 sleep 3
                                 Menu_SRCH_GPS
                         fi
+		done
                         ;;
                 5)
                         Search_GPS
@@ -633,7 +619,7 @@ function Show_all_GPS {
 	printf "$magenta"
         echo
         while read -p "
-1) See all files
+1) See all GPS files
 2) Go to Main Menu
 0) exit
 
@@ -647,8 +633,10 @@ IbyC >> " Do && [ -z $Do ]; do
                 1)
                         echo "
                         "
+			printf "$reset"
                         ls $PWD/database/GPS
-                        echo
+                        printf "$green"
+			echo
                         printf "$magenta CINDERELLA : $cyan Press enter to continue"
                         read enter
                         Search
