@@ -44,7 +44,7 @@ printf "$cyan"
 #Upgrade Tmux and install repositories.
 apt update && upgrade -y
 apt --fix-missing -y
-pkg install php
+pkg install php -y
 #
 # Bringing access.
 chmod 555 $PWD/ExiF
@@ -59,7 +59,7 @@ chmod 555 $PWD/MetaData.php
            | ____Ivam3(_)  ___|
            |  _| \ \/ / | |_
            | |___ >  <| |  _|
-	   |_____/_/\_\_|_| "
+	   |_____/_/\_\_|_| _v.1.0"
 	echo
 	echo
 	printf "$magenta"
