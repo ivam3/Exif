@@ -48,8 +48,12 @@ pkg install php -y
 #
 # Bringing access.
 chmod 555 $PWD/ExiF
-chmod 555 $PWD/GPS.php
-chmod 555 $PWD/MetaData.php
+chmod 444 $PWD/README.md
+chmod 555 $PWD/modules/*
+#
+# Removing trash
+rm database/GPS/GPS.txt
+rm database/MD/MD.php
 #
 # Thanks to ...
 	echo $(clear)
