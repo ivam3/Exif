@@ -69,7 +69,7 @@ echo "	     |-|        |-|
         printf "$magenta"
         while read -p "CINDERELLA : Tell me, where your photo is ? >> " Photo && [ -z $Photo ]; do
                 printf "        $red Please type the photo location $magenta \n"
-                sleep 3
+                sleep 2
 done
         if [ -e $Photo ]; then
         cp $Photo $PWD/IbyC.jpg
@@ -108,7 +108,7 @@ printf "$reset"
 	echo
 	printf "$magenta [*] CINDERELLA : $cyan Extracting meta data . . .\n"
 	extract_MD
-	sleep 3
+	sleep 2
 	printf "$green
 		Temporally was saved as $reset $PWD/tmp/MD.txt"
 	sleep 3
@@ -153,18 +153,18 @@ CINDERELLA : Save as (example.php) >>  " MD && [ -z $MD ]; do
                                 printf "$red
                                         [W] O_ops!!                                                                                                   $magenta"
                         done
-			sleep 3
+			sleep 1
 			if [ -e $PWD/database/MD/$MD ]; then
 				echo
                                 printf "		$red SORRY, there exist a file named $reset $MD
                                 "
-                                sleep 5
+                                sleep 3
                                 MD_results
                         else
                                 MD_backup
                                 echo
                                 printf "		$green GREAT!! $cyan it was saved as $reset $MD"
-                                sleep 5
+                                sleep 3
                                 MD_results
                         fi
                         ;;
@@ -183,7 +183,7 @@ echo "	    |-|           |-|
 	echo
 	printf "$magenta [*] CINDERELLA : $cyan Extracting GPS location . . .\n"
 	extract_GPS
-	sleep 3
+	sleep 2
 	printf "$green
 		Temporally was saved as $reset $PWD/tmp/GPS.txt "
 	sleep 3
@@ -229,19 +229,19 @@ CINDERELLA : Save as (example.txt) >>  " GPS && [ -z $GPS ]; do
 					[W] O_ops!!
 					$magenta"
 			done
-			sleep 3
+			sleep 1
 
 			if [ -e $PWD/database/GPS/$GPS ]; then
 				echo
 				printf "		$red SORRY, there exist a file named $reset $GPS
 				"
-				sleep 5
+				sleep 3
 				GPS_results
 			else
 				GPS_backup
 				echo
 				printf "		$green GREAT!! $cyan it was saved as $reset $GPS"
-				sleep 5
+				sleep 3
 				GPS_results
 			fi
 			
@@ -319,7 +319,7 @@ echo "	     |-|         |-|
 		$magenta"
 	done
 
-	sleep 3
+	sleep 1
 
 	if [ -e $PWD/database/MD/$File ]; then
 		echo
@@ -327,7 +327,7 @@ echo "	     |-|         |-|
 		sleep 1
 		Menu_SRCH_MD
 	else
-		sleep 2
+		sleep 1
 		echo
 		printf "$red The file $reset $File $red do not exist $reset"
 		Show_all_MD
@@ -358,12 +358,12 @@ function Case_SRCH_MD {
 		if [ -e $PWD/database/MD/$New_name ]; then
 			echo
 			printf "		$cyan The file $reset $File $cyan was changed to $reset $New_name"
-			sleep 5
+			sleep 3
 			Search
 		else
 			echo
 			printf "$red [W] O_ops!! Something was wrong"
-			sleep 5
+			sleep 3
 			Search
 		fi
                         ;;
@@ -381,12 +381,12 @@ function Case_SRCH_MD {
 			cp $PWD/database/MD/$File $Move/$File
 			echo
 			printf "		$cyan The file $File was move to $Move/$File"
-                        sleep 5
+                        sleep 3
                         Menu_SRCH_MD
                 else
                         echo
 			printf "$red [W] O_ops!! Something was wrong"
-                        sleep 5
+                        sleep 3
                         Menu_SRCH_MD
                 fi
                         ;;
@@ -397,25 +397,28 @@ function Case_SRCH_MD {
 				echo
 				printf "$red
 				[W] O_ops!!"
-				sleep 3
+				sleep 1
 			done
-
-			until [ $Delete = "Y y Yes yes N No n no" ]; do
-				echo
-				if [ $Delete = "Y y Yes yes" ]; then
+			
+			if [ ${Delete,,} = y ]; then
 				rm -rf $PWD/database/MD/$File
-				sleep 3
+				sleep 1
 				echo
 				printf "$magenta CINDERELLA : $green Yeii !! $cyan the file $File was remove"
-				sleep 5
+				sleep 3
 				Search
-			elif [ $Delate = "N no n No" ]; then
+			elif [ ${Delete,,} = n ]; then
 				echo
 				printf "$magenta CINDERELLA : $cyan Getting back . . ."
-				sleep 3
+				sleep 1
+				Menu_SRCH_MD
+			else
+				echo
+				printf "$red
+				[W] O_ops!!"
+				sleep 1
 				Menu_SRCH_MD
 			fi
-		done
 			;;
 		5)
 			Search_MD
@@ -478,7 +481,7 @@ echo "	     |-|         |-|
 		[W] O_ops!!
 		$magenta"
 	done
-	sleep 3
+	sleep 1
 	
 	if [ -e $PWD/database/GPS/$File ]; then
                 echo
@@ -539,12 +542,12 @@ function Case_SRCH_GPS {
                 if [ -e $PWD/database/GPS/$New_name ]; then
                         echo
                         printf "                $cyan The file $reset $File $cyan was change to $reset $New_name"
-                        sleep 5
+                        sleep 3
                         Search
                 else
                         echo
                         printf "$red [W] O_ops!! Something was wrong"
-                        sleep 5
+                        sleep 3
                         Search
                 fi
                         ;;
@@ -562,12 +565,12 @@ function Case_SRCH_GPS {
                         cp $PWD/database/GPS/$File $Move/$File
 			echo
                         printf "                $cyan The file $File was copy to $Move/$File"
-                        sleep 5
+                        sleep 3
                         Menu_SRCH_GPS
                 else
                         echo
                         printf "$red [W] O_ops!! Something was wrong"
-                        sleep 5
+                        sleep 3
                         Menu_SRCH_GPS
                 fi
                         ;;
@@ -578,25 +581,28 @@ function Case_SRCH_GPS {
                                 echo
                                 printf "$red
                                 [W] O_ops!!"
-				sleep 3
+				sleep 1
                         done
 
-                        until [ $Delete = "Y y Yes yes N No n no" ]; do
-                                echo
-			if [ $Delete = "Y y Yes yes" ]; then
+			if [ ${Delete,,} = y ]; then
 				rm -rf $PWD/database/GPS/$File
-                                sleep 3
-                                echo
-                        	printf "$magenta CINDERELLA : $green Yeii !! $cyan the file $File was remove"
-                                sleep 5
-                                Search
-                        elif [ $Delate = "N no n No" ]; then
-                                echo
-                                printf "$magenta CINDERELLA : $cyan Getting back . . ."
-                                sleep 3
-                                Menu_SRCH_GPS
-                        fi
-		done
+				sleep 1
+				echo
+				printf "$magenta CINDERELLA : $green Yeii !! $cyan the file $File was remove"
+				sleep 3
+				Search
+			elif [ ${Delete,,} = n ]; then
+				echo
+				printf "$magenta CINDERELLA : $cyan Getting back . . ."
+				sleep 1
+				Menu_SRCH_GPS
+			else
+				echo
+				printf "$red
+				[W] O_ops!!"
+				sleep 1
+				Menu_SRCH_GPS
+			fi
                         ;;
                 5)
                         Search_GPS
