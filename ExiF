@@ -1,4 +1,4 @@
-#!/data/data/com.termux/files/usr/bin/bash -e
+#!/data/data/com.termux/files/usr/bin/bash
 #Coded by Ivam3 on 06/02/18
 #
 
@@ -89,7 +89,7 @@ function extract_MD {
 }
 
 function extract_GPS {
-	php modules/GPS.php > tmp/GPS.txt
+	php modules/GPS.php | grep float > tmp/GPS.txt
 }
 
 function MD_backup {
@@ -108,7 +108,6 @@ printf "$reset"
 	echo
 	printf "$magenta [*] CINDERELLA : $cyan Extracting meta data . . .\n"
 	extract_MD
-	sleep 2
 	printf "$green
 		Temporally was saved as $reset $PWD/tmp/MD.txt"
 	sleep 3
@@ -133,10 +132,18 @@ echo "	      |-|          |-|
 			banner
 echo "	     |-|          |-|
 	        MD RESULTS"
-			printf "$reset"
 			echo
-			cat tmp/MD.txt
-			echo
+	cat tmp/MD.txt | grep "CINDERELLA : No header data found" > tmp/pipe
+			if [ -s tmp/pipe ]; then
+					echo
+					printf "$red                    [W] CINDERELLA : No header data found."
+					echo "
+					"
+				else
+					printf "$green"
+					cat tmp/MD.txt
+			fi
+				echo
 			printf "$magenta [*] CINDERELLA : $cyan Press enter to continue $reset"
                         read enter
 			echo $(clear)
@@ -183,7 +190,6 @@ echo "	    |-|           |-|
 	echo
 	printf "$magenta [*] CINDERELLA : $cyan Extracting GPS location . . .\n"
 	extract_GPS
-	sleep 2
 	printf "$green
 		Temporally was saved as $reset $PWD/tmp/GPS.txt "
 	sleep 3
@@ -208,10 +214,18 @@ echo "	     |-|           |-|
 			banner
 echo "	     |-|           |-|
 	        GPS RESULTS"
-			printf "$green"
 			echo
-			cat tmp/GPS.txt
-			echo
+			if [ -s tmp/GPS.txt ]; then
+				printf "$green"
+                                echo
+                                        cat tmp/GPS.txt
+                                else
+                                        echo
+					printf "$red 			[W] CINDERELLA : No header data found"
+                                        echo "
+					"
+				fi
+				echo
 			printf "$magenta [*] CINDERELLA : $cyan Press enter to continue $reset"
 			read enter
 			echo $(clear)
