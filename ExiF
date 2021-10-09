@@ -18,11 +18,6 @@ TMP_FILE=$(mktemp)
 
 command -v exiftool > /dev/null 2>&1 || { echo >&2 "[!]─➤ Installing repositories"; sleep 1; pkg install exiftool; }
 
-while [ -e $PWD/IbyC-ExiF ]; do
-	mv $PWD/IbyC-ExiF $PREFIX/bin/ExiF
-	chmod 711 $PREFIX/bin/ExiF
-done
-
 ctrl_c() {
 	Banner
 	printf "\t     |-|         |-|\n\t$R\tABORTING\n$W"
